@@ -40,7 +40,7 @@
       (div
        {:style style-body}
        (div
-        {:style (merge ui/row style-body)}
+        {:style style-body}
         (if (:logged-in? store)
           (let [router (:router store)]
             (case (:name router)

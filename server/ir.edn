@@ -25,6 +25,8 @@
                                                         ["{}"
                                                          [":session" "session"]
                                                          [":logged-in?" "true"]
+                                                         [":board" [":board" "db"]]
+                                                         [":size" ["or" [":size" "db"] "6"]]
                                                          [":user"
                                                           ["twig-user"
                                                            ["get-in" "db" ["[]" ":users" [":user-id" "session"]]]]]
@@ -38,6 +40,48 @@
                                       ["f" "xs"]
                                       ["reduce" ["fn" ["_" "x"] ["when" ["f" "x"] ["reduced" "x"]]] "nil" "xs"]]},
                  :procs []},
+         "updater.board" {:ns ["ns" "server.updater.board"],
+                          :defs {"draw" ["defn"
+                                         "draw"
+                                         ["db" "op-data" "session-id" "op-id" "op-time"]
+                                         ["let"
+                                          [["color" ["get-in" "db" ["[]" ":sessions" "session-id" ":color"]]]]
+                                          ["assoc-in"
+                                           "db"
+                                           ["[]" ":board" "op-data"]
+                                           ["if"
+                                            ["=" "color" ":random"]
+                                            ["str"
+                                             "|#"
+                                             ["->"
+                                              [".random" "js/Math"]
+                                              ["*" "16777215"]
+                                              ["js/Math.floor"]
+                                              [".toString" "16"]]]
+                                            "color"]]]],
+                                 "increase" ["defn"
+                                             "increase"
+                                             ["db" "op-data" "session-id" "op-id" "op-time"]
+                                             ["if"
+                                              ["contains?" "db" ":size"]
+                                              ["update" "db" ":size" "inc"]
+                                              ["assoc" "db" ":size" "7"]]],
+                                 "decrease" ["defn"
+                                             "decrease"
+                                             ["db" "op-data" "session-id" "op-id" "op-time"]
+                                             ["if"
+                                              ["contains?" "db" ":size"]
+                                              ["update" "db" ":size" "dec"]
+                                              ["assoc" "db" ":size" "5"]]],
+                                 "pick" ["defn"
+                                         "pick"
+                                         ["db" "op-data" "session-id" "op-id" "op-time"]
+                                         ["assoc-in" "db" ["[]" ":sessions" "session-id" ":color"] "op-data"]],
+                                 "reset-board" ["defn"
+                                                "reset-board"
+                                                ["db" "op-data" "session-id" "op-id" "op-time"]
+                                                ["assoc" "db" ":board" ["{}"]]]},
+                          :procs []},
          "schema" {:ns ["ns" "server.schema"],
                    :defs {"user" ["def"
                                   "user"
@@ -53,13 +97,21 @@
                           "configs" ["def"
                                      "configs"
                                      ["{}" [":storage-key" "|/data/cumulo/bored-board.edn"] [":port" "5021"]]],
-                          "database" ["def" "database" ["{}" [":sessions" ["{}"]] [":users" ["{}"]] [":topics" ["{}"]]]],
+                          "database" ["def"
+                                      "database"
+                                      ["{}"
+                                       [":sessions" ["{}"]]
+                                       [":users" ["{}"]]
+                                       [":board" ["{}"]]
+                                       [":size" "6"]
+                                       [":messages" ["{}"]]]],
                           "session" ["def"
                                      "session"
                                      ["{}"
                                       [":user-id" "nil"]
                                       [":id" "nil"]
                                       [":nickname" "nil"]
+                                      [":color" ":black"]
                                       [":router" ["{}" [":name" ":home"] [":data" "nil"] [":router" "nil"]]]
                                       [":notifications" ["[]"]]]],
                           "notification" ["def" "notification" ["{}" [":id" "nil"] [":kind" "nil"] [":text" "nil"]]]},
@@ -323,7 +375,8 @@
                               [":require"
                                ["[]" "server.updater.session" ":as" "session"]
                                ["[]" "server.updater.user" ":as" "user"]
-                               ["[]" "server.updater.router" ":as" "router"]]],
+                               ["[]" "server.updater.router" ":as" "router"]
+                               ["[]" "server.updater.board" ":as" "board"]]],
                          :defs {"updater" ["defn"
                                            "updater"
                                            ["db" "op" "op-data" "session-id" "op-id" "op-time"]
@@ -348,5 +401,13 @@
                                               "op-time"]]
                                             [":router/change"
                                              ["router/change" "db" "op-data" "session-id" "op-id" "op-time"]]
+                                            [":board/draw" ["board/draw" "db" "op-data" "session-id" "op-id" "op-time"]]
+                                            [":board/increase"
+                                             ["board/increase" "db" "op-data" "session-id" "op-id" "op-time"]]
+                                            [":board/decrease"
+                                             ["board/decrease" "db" "op-data" "session-id" "op-id" "op-time"]]
+                                            [":board/pick" ["board/pick" "db" "op-data" "session-id" "op-id" "op-time"]]
+                                            [":board/reset-board"
+                                             ["board/reset-board" "db" "op-data" "session-id" "op-id" "op-time"]]
                                             "db"]]},
                          :procs []}}}

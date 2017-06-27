@@ -10,6 +10,8 @@
        (if logged-in?
          {:session session,
           :logged-in? true,
+          :board (:board db),
+          :size (or (:size db) 6),
           :user (twig-user (get-in db [:users (:user-id session)])),
           :router router,
           :statistics {}}

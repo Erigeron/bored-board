@@ -15,38 +15,34 @@
    :align-items :stretch,
    :width 600,
    :height 600,
-   :grid-gap "8px"})
+   :grid-gap "4px"})
 
 (def style-container {:position :relative, :width "100%", :height "100%"})
 
-(def style-colors {:position :absolute, :top 0, :width "100%", :height "100%"})
+(def style-spot {:background-color (hsl 0 0 90), :cursor :pointer, :border-radius "2px"})
 
-(def style-spot {:background-color (hsl 0 0 80)})
+(defn on-draw [position]
+  (fn [e dispatch! mutate!] (dispatch! :board/draw (str (:x position) "/" (:y position)))))
 
 (defcomp
  comp-board
- (size board)
+ (size board grid-area)
  (let [digits (range 1 (inc size))
        spots (mapcat (fn [x] (map (fn [y] {:x x, :y y}) digits)) digits)]
    (div
-    {:style style-container}
+    {:style (merge style-container {:grid-area grid-area})}
     (div
      {:style style-board}
      (->> spots
           (map
            (fn [position]
-             (let []
+             (let [k (str (:x position) "/" (:y position))]
                [(str (:x position) "-" (:y position))
                 (div
-                 {:inner-text "demo",
-                  :style (merge
+                 {:style (merge
                           style-spot
-                          {:grid-area (str (:x position) "/" (:y position))})})])))))
-    (div
-     {:style (merge style-board style-colors)}
-     (->> board
-          (map
-           (fn [entry]
-             (let [[position color] entry]
-               [(str (:x position) "-" (:y position)) (<> span color nil)])))))
-    (comp-inspect "spots" spots nil ))))
+                          {:grid-area (str (:x position) "/" (:y position))}
+                          (if (contains? board k)
+                            {:border-radius "50%", :box-shadow "0 0 4px gray"})
+                          (if (contains? board k) {:background-color (get board k)})),
+                  :event {:click (on-draw position)}})]))))))))

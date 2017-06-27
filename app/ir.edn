@@ -47,16 +47,25 @@
                                  ["[]" "respo-ui.style.colors" ":as" "colors"]
                                  ["[]" "respo.core" ":refer" ["[]" "create-comp"]]
                                  ["[]" "respo.comp.space" ":refer" ["[]" "=<"]]
-                                 ["[]" "app.comp.board" ":refer" ["[]" "comp-board"]]]],
+                                 ["[]" "app.comp.board" ":refer" ["[]" "comp-board"]]
+                                 ["[]" "app.comp.resizer" ":refer" ["[]" "comp-resizer"]]
+                                 ["[]" "app.comp.palette" ":refer" ["[]" "comp-palette"]]]],
                            :defs {"comp-workspace" ["defcomp"
                                                     "comp-workspace"
                                                     ["states" "store"]
                                                     ["div"
                                                      ["{}" [":style" "style-workspace"]]
-                                                     ["comp-board" "12" ["{}"]]]],
+                                                     ["comp-resizer" [":size" "store"] "|3/1/3/1"]
+                                                     ["comp-board" [":size" "store"] [":board" "store"] "|1/1/2/1"]
+                                                     ["comp-palette"
+                                                      ["get-in" "store" ["[]" ":session" ":color"]]
+                                                      "|1/2/2/2"]]],
                                   "style-workspace" ["def"
                                                      "style-workspace"
-                                                     ["{}" [":display" ":grid"] [":width" "|100%"] [":height" "|100%"]]]},
+                                                     ["{}"
+                                                      [":display" ":grid"]
+                                                      [":grid-template-rows" "|1fr 1fr 80px"]
+                                                      [":grid-template-columns" "|2fr 1fr"]]]},
                            :procs []},
          "comp.board" {:ns ["ns"
                             "app.comp.board"
@@ -71,7 +80,7 @@
                              ["[]" "respo.comp.inspect" ":refer" ["[]" "comp-inspect"]]]],
                        :defs {"comp-board" ["defcomp"
                                             "comp-board"
-                                            ["size" "board"]
+                                            ["size" "board" "grid-area"]
                                             ["let"
                                              [["digits" ["range" "1" ["inc" "size"]]]
                                               ["spots"
@@ -79,7 +88,8 @@
                                                 ["fn" ["x"] ["map" ["fn" ["y"] ["{}" [":x" "x"] [":y" "y"]]] "digits"]]
                                                 "digits"]]]
                                              ["div"
-                                              ["{}" [":style" "style-container"]]
+                                              ["{}"
+                                               [":style" ["merge" "style-container" ["{}" [":grid-area" "grid-area"]]]]]
                                               ["div"
                                                ["{}" [":style" "style-board"]]
                                                ["->>"
@@ -88,30 +98,25 @@
                                                  ["fn"
                                                   ["position"]
                                                   ["let"
-                                                   []
+                                                   [["k" ["str" [":x" "position"] "|/" [":y" "position"]]]]
                                                    ["[]"
                                                     ["str" [":x" "position"] "|-" [":y" "position"]]
                                                     ["div"
                                                      ["{}"
-                                                      [":inner-text" "|demo"]
                                                       [":style"
                                                        ["merge"
                                                         "style-spot"
                                                         ["{}"
-                                                         [":grid-area" ["str" [":x" "position"] "|/" [":y" "position"]]]]]]]]]]]]]]
-                                              ["div"
-                                               ["{}" [":style" ["merge" "style-board" "style-colors"]]]
-                                               ["->>"
-                                                "board"
-                                                ["map"
-                                                 ["fn"
-                                                  ["entry"]
-                                                  ["let"
-                                                   [[["[]" "position" "color"] "entry"]]
-                                                   ["[]"
-                                                    ["str" [":x" "position"] "|-" [":y" "position"]]
-                                                    ["<>" "span" "color" "nil"]]]]]]]
-                                              ["comp-inspect" "|spots" "spots" "nil" ""]]]],
+                                                         [":grid-area" ["str" [":x" "position"] "|/" [":y" "position"]]]]
+                                                        ["if"
+                                                         ["contains?" "board" "k"]
+                                                         ["{}"
+                                                          [":border-radius" "|50%"]
+                                                          [":box-shadow" "|0 0 4px gray"]]]
+                                                        ["if"
+                                                         ["contains?" "board" "k"]
+                                                         ["{}" [":background-color" ["get" "board" "k"]]]]]]
+                                                      [":event" ["{}" [":click" ["on-draw" "position"]]]]]]]]]]]]]]],
                               "style-board" ["def"
                                              "style-board"
                                              ["{}"
@@ -120,18 +125,22 @@
                                               [":align-items" ":stretch"]
                                               [":width" "600"]
                                               [":height" "600"]
-                                              [":grid-gap" "|8px"]]],
+                                              [":grid-gap" "|4px"]]],
                               "style-container" ["def"
                                                  "style-container"
                                                  ["{}" [":position" ":relative"] [":width" "|100%"] [":height" "|100%"]]],
-                              "style-colors" ["def"
-                                              "style-colors"
-                                              ["{}"
-                                               [":position" ":absolute"]
-                                               [":top" "0"]
-                                               [":width" "|100%"]
-                                               [":height" "|100%"]]],
-                              "style-spot" ["def" "style-spot" ["{}" [":background-color" ["hsl" "0" "0" "80"]]]]},
+                              "style-spot" ["def"
+                                            "style-spot"
+                                            ["{}"
+                                             [":background-color" ["hsl" "0" "0" "90"]]
+                                             [":cursor" ":pointer"]
+                                             [":border-radius" "|2px"]]],
+                              "on-draw" ["defn"
+                                         "on-draw"
+                                         ["position"]
+                                         ["fn"
+                                          ["e" "dispatch!" "mutate!"]
+                                          ["dispatch!" ":board/draw" ["str" [":x" "position"] "|/" [":y" "position"]]]]]},
                        :procs []},
          "schema" {:ns ["ns" "app.schema"],
                    :defs {"configs" ["def" "configs" ["{}" [":storage-key" "|workflow-storage"] [":port" "5021"]]]},
@@ -175,7 +184,7 @@
                                                        ["div"
                                                         ["{}" [":style" "style-body"]]
                                                         ["div"
-                                                         ["{}" [":style" ["merge" "ui/row" "style-body"]]]
+                                                         ["{}" [":style" "style-body"]]
                                                          ["if"
                                                           [":logged-in?" "store"]
                                                           ["let"
@@ -393,7 +402,70 @@
                               "initial-state" ["def" "initial-state" ["{}" [":username" "|"] [":password" "|"]]]},
                        :procs []},
          "comp.chatroom" {:ns ["ns" "app.comp.chatroom"], :defs {}, :procs []},
-         "comp.palette" {:ns ["ns" "app.comp.palette"], :defs {}, :procs []},
+         "comp.palette" {:ns ["ns"
+                              "app.comp.palette"
+                              [":require-macros" ["[]" "respo.macros" ":refer" ["[]" "defcomp" "<>" "span" "div" "a"]]]
+                              [":require"
+                               ["[]" "hsl.core" ":refer" ["[]" "hsl"]]
+                               ["[]" "app.schema" ":as" "schema"]
+                               ["[]" "respo-ui.style" ":as" "ui"]
+                               ["[]" "respo-ui.style.colors" ":as" "colors"]
+                               ["[]" "respo.core" ":refer" ["[]" "create-comp"]]
+                               ["[]" "respo.comp.space" ":refer" ["[]" "=<"]]]],
+                         :defs {"comp-palette" ["defcomp"
+                                                "comp-palette"
+                                                ["color" "position"]
+                                                ["div"
+                                                 ["{}"
+                                                  [":style" ["merge" "style-palette" ["{}" [":grid-area" "position"]]]]]
+                                                 ["->>"
+                                                  "color-layouts"
+                                                  ["map"
+                                                   ["fn"
+                                                    ["entry"]
+                                                    ["let"
+                                                     [[["[]" "color-name" "position"] "entry"]]
+                                                     ["[]"
+                                                      "color-name"
+                                                      ["div"
+                                                       ["{}"
+                                                        [":style"
+                                                         ["merge"
+                                                          "style-color"
+                                                          ["{}"
+                                                           [":grid-area" "position"]
+                                                           [":background-color" "color-name"]]
+                                                          ["if"
+                                                           ["=" "color" "color-name"]
+                                                           ["{}" [":border" "|2px solid blue"]]]]]
+                                                        [":event" ["{}" [":click" ["on-pick" "color-name"]]]]]]]]]]]]],
+                                "color-layouts" ["def"
+                                                 "color-layouts"
+                                                 ["{}"
+                                                  [":purple" "|1/1/1/1"]
+                                                  [":red" "|1/2/1/2"]
+                                                  [":yellow" "|1/3/1/3"]
+                                                  [":black" "|2/1/2/1"]
+                                                  [":random" "|2/2/2/2"]
+                                                  [":white" "|2/3/2/3"]
+                                                  [":blue" "|3/1/3/1"]
+                                                  [":cyan" "|3/2/3/2"]
+                                                  [":green" "|3/3/3/3"]]],
+                                "style-palette" ["def"
+                                                 "style-palette"
+                                                 ["{}"
+                                                  [":display" ":grid"]
+                                                  [":grid-template-rows" "|1fr 1fr 1fr"]
+                                                  [":grid-template-columns" "|1fr 1fr 1fr"]
+                                                  [":grid-gap" "|8px"]
+                                                  [":width" "160"]
+                                                  [":height" "160"]]],
+                                "style-color" ["def" "style-color" ["{}" [":min-width" "40"] [":min-height" "40"]]],
+                                "on-pick" ["defn"
+                                           "on-pick"
+                                           ["color-name"]
+                                           ["fn" ["e" "dispatch!" "mutate!"] ["dispatch!" ":board/pick" "color-name"]]]},
+                         :procs []},
          "render" {:ns ["ns"
                         "app.render"
                         [":require"
@@ -495,4 +567,52 @@
                                           ["dispatch!"
                                            ":router/change"
                                            ["{}" [":name" ":home"] [":params" "nil"] [":router" "nil"]]]]},
-                        :procs []}}}
+                        :procs []},
+         "comp.resizer" {:ns ["ns"
+                              "app.comp.resizer"
+                              [":require-macros"
+                               ["[]" "respo.macros" ":refer" ["[]" "defcomp" "<>" "span" "button" "div" "a"]]]
+                              [":require"
+                               ["[]" "hsl.core" ":refer" ["[]" "hsl"]]
+                               ["[]" "app.schema" ":as" "schema"]
+                               ["[]" "respo-ui.style" ":as" "ui"]
+                               ["[]" "respo-ui.style.colors" ":as" "colors"]
+                               ["[]" "respo.core" ":refer" ["[]" "create-comp"]]
+                               ["[]" "respo.comp.space" ":refer" ["[]" "=<"]]]],
+                         :defs {"comp-resizer" ["defcomp"
+                                                "comp-resizer"
+                                                ["current-size" "grid-area"]
+                                                ["div"
+                                                 ["{}" [":style" ["{}" [":grid-area" "grid-area"]]]]
+                                                 ["<>" "span" "current-size" "nil"]
+                                                 ["=<" "8" "nil"]
+                                                 ["button"
+                                                  ["{}"
+                                                   [":inner-text" "|increase"]
+                                                   [":style" "ui/button"]
+                                                   [":event" ["{}" [":click" "on-inc"]]]]]
+                                                 ["=<" "8" "nil"]
+                                                 ["button"
+                                                  ["{}"
+                                                   [":inner-text" "|decrease"]
+                                                   [":style" "ui/button"]
+                                                   [":event" ["{}" [":click" "on-dec"]]]]]
+                                                 ["=<" "8" "nil"]
+                                                 ["button"
+                                                  ["{}"
+                                                   [":inner-text" "|reset"]
+                                                   [":style" "ui/button"]
+                                                   [":event" ["{}" [":click" "on-reset"]]]]]]],
+                                "on-inc" ["defn"
+                                          "on-inc"
+                                          ["e" "dispatch!" "mutate!"]
+                                          ["dispatch!" ":board/increase" "nil"]],
+                                "on-dec" ["defn"
+                                          "on-dec"
+                                          ["e" "dispatch!" "mutate!"]
+                                          ["dispatch!" ":board/decrease" "nil"]],
+                                "on-reset" ["defn"
+                                            "on-reset"
+                                            ["e" "dispatch!" "mutate!"]
+                                            ["dispatch!" ":board/reset-board" "nil"]]},
+                         :procs []}}}
