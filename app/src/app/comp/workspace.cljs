@@ -12,13 +12,16 @@
             [app.comp.palette :refer [comp-palette]]))
 
 (def style-workspace
-  {:display :grid, :grid-template-rows "1fr 1fr 80px", :grid-template-columns "2fr 1fr"})
+  {:display :grid,
+   :grid-template-rows "1fr 1fr 80px",
+   :grid-template-columns "2fr 1fr",
+   :grid-gap "16px"})
 
 (defcomp
  comp-workspace
  (states store)
  (div
   {:style style-workspace}
-  (comp-resizer (:size store) "3/1/3/1")
-  (comp-board (:size store) (:board store) "1/1/2/1")
-  (comp-palette (get-in store [:session :color]) "1/2/2/2")))
+  (comp-resizer (:size store) "3/1/4/2")
+  (comp-board (:size store) (:board store) "1/1/3/2")
+  (comp-palette (get-in store [:session :color]) "1/2/3/3")))

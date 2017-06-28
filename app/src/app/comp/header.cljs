@@ -11,7 +11,7 @@
 
 (def style-logo {:cursor :pointer, :grid-area "1/1/1/1"})
 
-(def style-pointer {:cursor "pointer", :grid-area "1/3/1/3"})
+(def style-pointer {:cursor "pointer", :grid-area "1/3/2/4"})
 
 (def style-header
   {:background-color colors/motif,
@@ -25,7 +25,8 @@
    :grid-template-rows "1fr",
    :grid-template-columns "120px 1fr 120px",
    :justify-items :center,
-   :align-items :center})
+   :align-items :center,
+   :grid-gap "8px"})
 
 (defn on-home [e dispatch!]
   (dispatch! :router/change {:name :home, :params nil, :router nil}))
