@@ -9,6 +9,9 @@
             [respo.comp.space :refer [=<]]
             [respo.comp.inspect :refer [comp-inspect]]))
 
+(defn on-draw [position]
+  (fn [e dispatch! mutate!] (dispatch! :board/draw (str (:x position) "/" (:y position)))))
+
 (def style-board
   {:display :grid,
    :justify-items :stretch,
@@ -20,9 +23,6 @@
 (def style-container {:position :relative, :width "100%", :height "100%"})
 
 (def style-spot {:background-color (hsl 0 0 90), :cursor :pointer, :border-radius "2px"})
-
-(defn on-draw [position]
-  (fn [e dispatch! mutate!] (dispatch! :board/draw (str (:x position) "/" (:y position)))))
 
 (defcomp
  comp-board

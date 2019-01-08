@@ -8,9 +8,9 @@
             [respo.core :refer [create-comp]]
             [respo.comp.space :refer [=<]]))
 
-(defn on-inc [e dispatch! mutate!] (dispatch! :board/increase nil))
-
 (defn on-dec [e dispatch! mutate!] (dispatch! :board/decrease nil))
+
+(defn on-inc [e dispatch! mutate!] (dispatch! :board/increase nil))
 
 (defn on-reset [e dispatch! mutate!] (dispatch! :board/reset-board nil))
 

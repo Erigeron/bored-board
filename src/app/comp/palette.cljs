@@ -19,6 +19,10 @@
    :cyan "3/2/3/2",
    :green "3/3/3/3"})
 
+(defn on-pick [color-name] (fn [e dispatch! mutate!] (dispatch! :board/pick color-name)))
+
+(def style-color {:min-width 40, :min-height 40})
+
 (def style-palette
   {:display :grid,
    :grid-template-rows "1fr 1fr 1fr",
@@ -26,10 +30,6 @@
    :grid-gap "8px",
    :width 160,
    :height 160})
-
-(def style-color {:min-width 40, :min-height 40})
-
-(defn on-pick [color-name] (fn [e dispatch! mutate!] (dispatch! :board/pick color-name)))
 
 (defcomp
  comp-palette
