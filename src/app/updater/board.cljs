@@ -1,5 +1,5 @@
 
-(ns server.updater.board )
+(ns app.updater.board )
 
 (defn decrease [db op-data session-id op-id op-time]
   (if (contains? db :size) (update db :size dec) (assoc db :size 5)))

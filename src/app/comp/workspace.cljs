@@ -1,10 +1,10 @@
 
 (ns app.comp.workspace
-  (:require-macros [respo.macros :refer [defcomp <> span div a]])
   (:require [hsl.core :refer [hsl]]
             [app.schema :as schema]
-            [respo-ui.style :as ui]
-            [respo-ui.style.colors :as colors]
+            [respo.core :refer [defcomp <> span div a]]
+            [respo-ui.core :as ui]
+            [respo-ui.colors :as colors]
             [respo.core :refer [create-comp]]
             [respo.comp.space :refer [=<]]
             [app.comp.board :refer [comp-board]]

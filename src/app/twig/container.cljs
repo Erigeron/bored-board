@@ -28,6 +28,8 @@
                   :home (:pages db)
                   :profile (twig-members (:sessions db) (:users db))
                   {})),
+       :board (:board db),
+       :size (or (:size db) 6),
        :count (count (:sessions db)),
        :color (color/randomColor)}
       nil))))

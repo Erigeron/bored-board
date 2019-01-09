@@ -17,15 +17,15 @@
       false)))
 
 (def site
-  {:port 5021,
-   :title "Cumulo",
+  {:port 11016,
+   :title "Bored board",
    :icon "http://cdn.tiye.me/logo/cumulo.png",
    :dev-ui "http://localhost:8100/main.css",
    :release-ui "http://cdn.tiye.me/favored-fonts/main.css",
-   :cdn-url "http://cdn.tiye.me/cumulo-workflow/",
-   :cdn-folder "tiye.me:cdn/cumulo-workflow",
-   :upload-folder "tiye.me:repo/Cumulo/workflow/",
-   :server-folder "tiye.me:servers/workflow",
+   :cdn-url "http://cdn.tiye.me/bored-board/",
+   :cdn-folder "tiye.me:cdn/bored-board",
+   :upload-folder "tiye.me:repo/Erigeron/bored-board/",
+   :server-folder "tiye.me:servers/bored-board",
    :theme "#eeeeff",
-   :storage-key "workflow-storage",
+   :storage-key "bored-board",
    :storage-file "storage.edn"})

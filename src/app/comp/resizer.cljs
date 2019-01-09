@@ -1,10 +1,10 @@
 
 (ns app.comp.resizer
-  (:require-macros [respo.macros :refer [defcomp <> span button div a]])
   (:require [hsl.core :refer [hsl]]
             [app.schema :as schema]
-            [respo-ui.style :as ui]
-            [respo-ui.style.colors :as colors]
+            [respo.core :refer [defcomp <> span button div a]]
+            [respo-ui.core :as ui]
+            [respo-ui.colors :as colors]
             [respo.core :refer [create-comp]]
             [respo.comp.space :refer [=<]]))
 
@@ -21,8 +21,8 @@
   {:style {:grid-area grid-area}}
   (<> span current-size nil)
   (=< 8 nil)
-  (button {:inner-text "increase", :style ui/button, :event {:click on-inc}})
+  (button {:inner-text "increase", :style ui/button, :on-click on-inc})
   (=< 8 nil)
-  (button {:inner-text "decrease", :style ui/button, :event {:click on-dec}})
+  (button {:inner-text "decrease", :style ui/button, :on-click on-dec})
   (=< 8 nil)
-  (button {:inner-text "reset", :style ui/button, :event {:click on-reset}})))
+  (button {:inner-text "reset", :style ui/button, :on-click on-reset})))

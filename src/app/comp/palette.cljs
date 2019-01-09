@@ -1,10 +1,10 @@
 
 (ns app.comp.palette
-  (:require-macros [respo.macros :refer [defcomp <> span div a]])
   (:require [hsl.core :refer [hsl]]
             [app.schema :as schema]
-            [respo-ui.style :as ui]
-            [respo-ui.style.colors :as colors]
+            [respo.core :refer [defcomp list-> <> span div a]]
+            [respo-ui.core :as ui]
+            [respo-ui.colors :as colors]
             [respo.core :refer [create-comp]]
             [respo.comp.space :refer [=<]]))
 
@@ -34,7 +34,7 @@
 (defcomp
  comp-palette
  (color position)
- (div
+ (list->
   {:style (merge style-palette {:grid-area position})}
   (->> color-layouts
        (map
@@ -46,4 +46,4 @@
                        style-color
                        {:grid-area position, :background-color color-name}
                        (if (= color color-name) {:border "2px solid blue"})),
-               :event {:click (on-pick color-name)}})]))))))
+               :on-click (on-pick color-name)})]))))))
