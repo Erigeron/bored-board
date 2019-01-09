@@ -16,9 +16,9 @@
 
 (defcomp
  comp-resizer
- (current-size grid-area)
+ (current-size)
  (div
-  {:style {:grid-area grid-area}}
+  {:style {}}
   (<> span current-size nil)
   (=< 8 nil)
   (button {:inner-text "increase", :style ui/button, :on-click on-inc})

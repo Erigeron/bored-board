@@ -26,11 +26,11 @@
 
 (defcomp
  comp-board
- (size board grid-area)
+ (size board)
  (let [digits (range 1 (inc size))
        spots (mapcat (fn [x] (map (fn [y] {:x x, :y y}) digits)) digits)]
    (div
-    {:style (merge style-container {:grid-area grid-area})}
+    {:style (merge style-container)}
     (list->
      {:style style-board}
      (->> spots

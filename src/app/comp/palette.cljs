@@ -6,7 +6,8 @@
             [respo-ui.core :as ui]
             [respo-ui.colors :as colors]
             [respo.core :refer [create-comp]]
-            [respo.comp.space :refer [=<]]))
+            [respo.comp.space :refer [=<]])
+  (:require-macros [clojure.core.strint :refer [<<]]))
 
 (def color-layouts
   {:purple "1/1/1/1",
@@ -21,7 +22,7 @@
 
 (defn on-pick [color-name] (fn [e dispatch! mutate!] (dispatch! :board/pick color-name)))
 
-(def style-color {:min-width 40, :min-height 40})
+(def style-color {})
 
 (def style-palette
   {:display :grid,
@@ -29,13 +30,14 @@
    :grid-template-columns "1fr 1fr 1fr",
    :grid-gap "8px",
    :width 160,
-   :height 160})
+   :height 160,
+   :justify-content :center})
 
 (defcomp
  comp-palette
- (color position)
+ (color)
  (list->
-  {:style (merge style-palette {:grid-area position})}
+  {:style (merge style-palette)}
   (->> color-layouts
        (map
         (fn [entry]
@@ -44,6 +46,12 @@
              (div
               {:style (merge
                        style-color
-                       {:grid-area position, :background-color color-name}
-                       (if (= color color-name) {:border "2px solid blue"})),
-               :on-click (on-pick color-name)})]))))))
+                       {:grid-area position,
+                        :background-color color-name,
+                        :border "1px solid #eee",
+                        :border-radius "50%",
+                        :max-width 32,
+                        :max-height 32}
+                       (if (= color color-name) {:max-height 1000, :max-width 1000})),
+               :on-click (on-pick color-name)}
+              (if (= color-name :random) (<> "Random")))]))))))

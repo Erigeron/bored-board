@@ -11,17 +11,16 @@
             [app.comp.resizer :refer [comp-resizer]]
             [app.comp.palette :refer [comp-palette]]))
 
-(def style-workspace
-  {:display :grid,
-   :grid-template-rows "1fr 1fr 80px",
-   :grid-template-columns "2fr 1fr",
-   :grid-gap "16px"})
+(def style-workspace {:overflow :auto, :padding 16})
 
 (defcomp
  comp-workspace
  (states store)
  (div
-  {:style style-workspace}
-  (comp-resizer (:size store) "3/1/4/2")
-  (comp-board (:size store) (:board store) "1/1/3/2")
-  (comp-palette (get-in store [:session :color]) "1/2/3/3")))
+  {:style (merge ui/row style-workspace)}
+  (div
+   {:style ui/flex}
+   (comp-resizer (:size store))
+   (=< nil 16)
+   (comp-board (:size store) (:board store)))
+  (comp-palette (get-in store [:session :color]))))
