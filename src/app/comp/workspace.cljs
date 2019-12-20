@@ -4,8 +4,6 @@
             [app.schema :as schema]
             [respo.core :refer [defcomp <> span div a]]
             [respo-ui.core :as ui]
-            [respo-ui.colors :as colors]
-            [respo.core :refer [create-comp]]
             [respo.comp.space :refer [=<]]
             [app.comp.board :refer [comp-board]]
             [app.comp.resizer :refer [comp-resizer]]

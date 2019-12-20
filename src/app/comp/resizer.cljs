@@ -4,8 +4,6 @@
             [app.schema :as schema]
             [respo.core :refer [defcomp <> span button div a]]
             [respo-ui.core :as ui]
-            [respo-ui.colors :as colors]
-            [respo.core :refer [create-comp]]
             [respo.comp.space :refer [=<]]))
 
 (defn on-dec [e dispatch! mutate!] (dispatch! :board/decrease nil))
